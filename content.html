@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSC Topics & Subtopics</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa; /* Light gray background */
+            padding-bottom: 70px; /* Space for fixed bottom navigation */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Custom style for the ribbon effect on cards */
+        .ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 40px 40px 0;
+            border-color: transparent #fff transparent transparent; /* Default white */
+            transform: rotate(360deg); /* Ensures correct orientation */
+            box-shadow: -2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .ribbon-red { border-color: transparent #ef4444 transparent transparent; } /* bg-red-500 */
+        .ribbon-purple { border-color: transparent #8b5cf6 transparent transparent; } /* bg-purple-600 */
+        .ribbon-green { border-color: transparent #22c55e transparent transparent; } /* bg-green-500 */
+        .ribbon-blue { border-color: transparent #3b82f6 transparent transparent; } /* bg-blue-500 */
+        .ribbon-yellow { border-color: transparent #eab308 transparent transparent; } /* bg-yellow-500 */
+        .ribbon-darkblue { border-color: transparent #1a202c transparent transparent; } /* bg-blue-900 */
+
+        /* Specific styling for content display */
+        .content-display {
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            padding: 1.5rem; /* p-6 */
+            margin-top: 1.5rem; /* mt-6 */
+        }
+        .content-display h2 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 1rem; /* mb-4 */
+            color: #333;
+        }
+        .content-display p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+        .content-display ul {
+            list-style-type: none; /* Remove default bullet points */
+            padding-left: 0;
+        }
+        .content-display ul li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5em; /* Space for custom bullet */
+            color: #444;
+        }
+        .content-display ul li::before {
+            content: '•'; /* Custom bullet point */
+            color: #8b5cf6; /* Purple color */
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1.5em; /* Align bullet point */
+        }
+        .content-display ul ul {
+            margin-top: 0.5rem;
+            margin-left: 1.5rem; /* Indent sub-lists */
+        }
+        .content-display ul ul li::before {
+            content: '–'; /* Custom dash for sub-bullets */
+            color: #6b7280; /* Gray color */
+        }
+
+        /* Styling for the single flashcard display */
+        .flashcard-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50vh; /* Adjust as needed */
+        }
+
+        .flashcard {
+            position: relative;
+            width: 280px; /* Adjust size as needed */
+            height: 350px; /* Adjust size as needed */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.2), 0 8px 15px -5px rgba(0, 0, 0, 0.1); /* Deeper shadow */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .flashcard-back {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 100%;
+            height: 100%;
+            background-color: #8b5cf6; /* Purple */
+            border-radius: 1.5rem;
+            z-index: -1;
+            transform: translateZ(-20px) rotateY(-10deg) rotateX(5deg); /* Slightly offset */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .flashcard-front {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ef4444; /* Red */
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden;
+            z-index: 1;
+        }
+
+        .flashcard-label {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .flashcard-title {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .flashcard-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* pill shape */
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            transition: background-color 0.3s ease;
+        }
+
+        .flashcard-button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="text-gray-800 p-4 sm:p-6 md:p-8">
+    <!-- Header -->
+    <header class="flex items-center justify-start mb-8">
+        <button class="text-gray-600 hover:text-gray-900 focus:outline-none mr-4" onclick="history.back()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <span id="current-gs-title" class="px-4 py-2 bg-purple-600 text-white font-medium rounded-full text-lg shadow-md"></span>
+        <span id="current-topic-title" class="px-4 py-2 bg-purple-600 text-white font-medium rounded-full text-lg shadow-md ml-2"></span>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="relative mb-8 max-w-md mx-auto">
+        <input type="text" id="search-input" placeholder="Search Topic" class="w-full py-3 pl-5 pr-12 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+        <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search text-gray-500"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+    </div>
+
+    <!-- Content Grid (Topics/Subtopics) -->
+    <section class="grid grid-cols-2 gap-6 mb-8" id="content-grid">
+        <!-- Content will be dynamically loaded here -->
+    </section>
+
+    <!-- Detailed Content Display (for subtopics) -->
+    <section id="detailed-content" class="content-display hidden">
+        <!-- Tags for GS and Topic -->
+        <div class="flex space-x-2 mb-4">
+            <span id="detail-gs-tag" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm font-medium"></span>
+            <span id="detail-topic-tag" class="px-3 py-1 bg-red-500 text-white rounded-full text-sm font-medium"></span>
+        </div>
+        <p id="detail-intro-text" class="text-gray-700 mb-4"></p>
+        <div id="detail-main-content" class="text-gray-800"></div>
+    </section>
+
+    <!-- Flashcard Display -->
+    <section id="flashcard-display" class="flashcard-container hidden">
+        <div class="flashcard">
+            <div class="flashcard-back"></div>
+            <div class="flashcard-front">
+                <span class="flashcard-label">FlashCards</span>
+                <h3 id="flashcard-title" class="flashcard-title"></h3>
+                <button class="flashcard-button">Click to view</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Navigation Menu -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg rounded-t-xl py-3 px-4 flex justify-around items-center border-t border-gray-200 z-50">
+        <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="flex flex-col items-center text-blue-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span class="text-xs mt-1">Learn</span>
+        </a>
+        <!-- AI Assistant Button (Central and larger) -->
+        <a href="#" class="flex flex-col items-center justify-center -mt-8 bg-gradient-to-r from-purple-600 to-indigo-600 p-4 rounded-full shadow-lg text-white transform hover:scale-110 transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot"><path d="M12 8V4H8"/><path d="M22 17c0 2.76-2.24 5-5 5H7c-2.76 0-5-2.24-5-5V7c0-2.76 2.24-5 5-5h10c2.76 0 5 2.24 5 5z"/><path d="M9 14h6"/><path d="M9 10h6"/></svg>
+            <span class="text-xs mt-1">AI Assistant</span>
+        </a>
+        <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 0 2-2V4a2 2 0 0 1 2-2h7.5L22 7.5V20a2 2 0 0 1-2 2Z"/><path d="M10 12.5h8"/><path d="M10 16.5h8"/><path d="M10 8.5h8"/></svg>
+            <span class="text-xs mt-1">News</span>
+        </a>
+        <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            <span class="text-xs mt-1">Statistics</span>
+        </a>
+    </nav>
+
+    <script>
+        const contentGrid = document.getElementById('content-grid');
+        const currentGsTitle = document.getElementById('current-gs-title');
+        const currentTopicTitle = document.getElementById('current-topic-title');
+        const searchInput = document.getElementById('search-input');
+        const detailedContentSection = document.getElementById('detailed-content');
+        const detailGsTag = document.getElementById('detail-gs-tag');
+        const detailTopicTag = document.getElementById('detail-topic-tag');
+        const detailIntroText = document.getElementById('detail-intro-text');
+        const detailMainContent = document.getElementById('detail-main-content');
+        const flashcardDisplay = document.getElementById('flashcard-display');
+        const flashcardTitle = document.getElementById('flashcard-title');
+
+
+        // Data structure for content (same as AI Assistant for consistency)
+        const allUPSCContent = {
+            notes: [
+                { id: 'gs1', title: 'GS 1: Art & Culture, History, Geography', color: 'red-500', topics: [
+                    { id: 'gs1-topic1', title: 'Indian Heritage and Culture', subtopics: [
+                        { id: 'gs1-topic1-subtopic1', title: 'Ancient Indian History: Indus Valley, Vedic, Mauryan, Gupta', content: {
+                            intro: 'Here\'s a comprehensive note on Indian Polity for GS 1, broken down into key points covering essential topics:',
+                            main: `
+                                <ul>
+                                    <li><b>I. Constitutional Framework & Basic Concepts</b>
+                                        <ul>
+                                            <li>Constitution and constitutionalism:
+                                                <ul>
+                                                    <li>Meaning of the term ‘constitution’ and ‘constitutionalism’</li>
+                                                    <li>Understanding constitutionalism (limited government) and its role in a democratic state</li>
+                                                    <li>Types of constitutions</li>
+                                                </ul>
+                                            </li>
+                                            <li>Making of the Constitution:
+                                                <ul>
+                                                    <li>Constituent Assembly: Objective Resolution, Committees, Enactment</li>
+                                                    <li>Influence of the Government of India Act, 1935</li>
+                                                    <li>Sources of the Constitution: Borrowed features from other Constitutions (e.g., UK, USA, Ireland, Canada, Australia)</li>
+                                                </ul>
+                                            </li>
+                                            <li>Preamble:
+                                                <ul>
+                                                    <li>Keywords: Sovereign, Socialist, Secular, Democratic, Republic, Justice, Liberty, Equality, Fraternity</li>
+                                                    <li>Significance and its amendability (Kesavananda Bharati Case)</li>
+                                                </ul>
+                                            </li>
+                                            <li>Salient Features of the Indian Constitution:
+                                                <ul>
+                                                    <li>Lengthiest Written Constitution</li>
+                                                    <li>Blend of rigidity and flexibility</li>
+                                                    <li>Parliamentary System of Government</li>
+                                                    <li>Presidential System</li>
+                                                    <li>Federal System with unitary bias</li>
+                                                    <li>Integrated and Independent Judiciary</li>
+                                                    <li>Fundamental Rights (FRs), Directive Principles of State Policy (DPSP), Fundamental Duties (FDs)</li>
+                                                    <li>Secular State, Universal Adult Franchise, Single Citizenship, Independent bodies (e.g., Election Commission, UPSC, CAG)</li>
+                                                    <li>Emergency Provisions</li>
+                                                </ul>
+                                            </li>
+                                            <li>Basic Structure Doctrine:
+                                                <ul>
+                                                    <li>Evolution from Shankari Prasad to Kesavananda Bharati case (1973)</li>
+                                                    <li>Parliament’s power to amend the Constitution vs. the doctrine that certain core features cannot be destroyed or altered.</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><b>II. Union and its Territory (Articles 1-4)</b>
+                                        <ul>
+                                            <li>Constitutional provisions for names and territories of states/UTs.</li>
+                                            <li>Parliament’s power to form new states, alter boundaries, etc.</li>
+                                            <li>States Reorganisation Act, 1956.</li>
+                                        </ul>
+                                    </li>
+                                    <li><b>Citizenship (Articles 5-11)</b>
+                                        <ul>
+                                            <li>Constitutional provisions of CITIZENSHIP</li>
+                                            <li>Modes of acquisition (birth, descent, registration, naturalization, incorporation of territory).</li>
+                                            <li>Loss of Citizenship (renunciation, termination, deprivation).</li>
+                                            <li>Overseas Citizen of India (OCI), Person of Indian Origin (PIO), Non-Resident Indian (NRI).</li>
+                                            <li>Citizenship Act, 1955 (and its amendments).</li>
+                                        </ul>
+                                    </li>
+                                    <li><b>III. Fundamental Rights (Part III, Articles 12-35)</b>
+                                        <ul>
+                                            <li>Fundamental Rights (Part III, Articles 12-35):
+                                                <ul>
+                                                    <li>Right to Equality (Articles 14-18): Equality before law, equal protection of laws, prohibition of discrimination, abolition of untouchability and titles.</li>
+                                                    <li>Right to Freedom (Articles 19-22): Six freedoms (speech, assembly, association, movement, residence, profession), protection in respect of conviction for offences, protection of life and personal liberty (Art. 21), Right to Education (Art. 21A), protection against arrest and detention.</li>
+                                                    <li>Right against Exploitation (Articles 23-24): Prohibition of human trafficking and forced labor, prohibition of employment of children in factories.</li>
+                                                    <li>Right to Freedom of Religion (Articles 25-28): Freedom of conscience, free profession, practice, and propagation of religion, freedom to manage religious affairs, freedom from taxation for promotion of any religion, freedom from religious instruction in certain educational institutions.</li>
+                                                    <li>Cultural and Educational Rights (Articles 29-30): Protection of interests of minorities, right of minorities to establish and administer educational institutions.</li>
+                                                    <li>Right to Constitutional Remedies (Article 32): "Heart and Soul of the Constitution" by Dr. Ambedkar; enforcement of Fundamental Rights by Supreme Court and High Courts; includes writs: Habeas Corpus, Mandamus, Prohibition, Certiorari, Quo Warranto.</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            `
+                        }},
+                        { id: 'gs1-topic1-subtopic2', title: 'Medieval Indian History: Delhi Sultanate, Mughal Empire' },
+                        { id: 'gs1-topic1-subtopic3', title: 'Modern Indian History: Advent of Europeans, Freedom Struggle' },
+                        { id: 'gs1-topic1-subtopic4', title: 'Indian Art Forms: Architecture, Sculpture, Paintings, Music, Dance' },
+                        { id: 'gs1-topic1-subtopic5', title: 'Literature and Philosophy' }
+                    ]},
+                    { id: 'gs1-topic2', title: 'World and Indian Geography', subtopics: [
+                        { id: 'gs1-topic2-subtopic1', title: 'Physical Geography: Geomorphology, Climatology, Oceanography' },
+                        { id: 'gs1-topic2-subtopic2', title: 'Human Geography: Population, Settlement, Economic Activities' },
+                        { id: 'gs1-topic2-subtopic3', title: 'Resources: Distribution of Key Natural Resources' },
+                        { id: 'gs1-topic2-subtopic4', title: 'Environmental Geography: Major Environmental Issues' },
+                        { id: 'gs1-topic2-subtopic5', title: 'Important Geophysical Phenomena' }
+                    ]},
+                    { id: 'gs1-topic3', title: 'Indian Society', subtopics: [
+                        { id: 'gs1-topic3-subtopic1', title: 'Salient Features of Indian Society' },
+                        { id: 'gs1-topic3-subtopic2', title: 'Diversity of India' },
+                        { id: 'gs1-topic3-subtopic3', title: 'Role of Women and Women’s Organization' },
+                        { id: 'gs1-topic3-subtopic4', title: 'Poverty and Developmental Issues' },
+                        { id: 'gs1-topic3-subtopic5', title: 'Globalization and its Impact' }
+                    ]},
+                    { id: 'gs1-topic4', title: 'World History', subtopics: [
+                        { id: 'gs1-topic4-subtopic1', title: 'Industrial Revolution' },
+                        { id: 'gs1-topic4-subtopic2', title: 'World Wars' },
+                        { id: 'gs1-topic4-subtopic3', title: 'Cold War Era' }
+                    ]},
+                    { id: 'gs1-topic5', title: 'Post-Independence Consolidation', subtopics: [
+                        { id: 'gs1-topic5-subtopic1', title: 'Reorganization of States' },
+                        { id: 'gs1-topic5-subtopic2', title: 'Economic Development' }
+                    ]},
+                    { id: 'gs1-topic6', title: 'Disaster Management in India', subtopics: [
+                        { id: 'gs1-topic6-subtopic1', title: 'Types of Disasters' },
+                        { id: 'gs1-topic6-subtopic2', title: 'Disaster Management Cycle' }
+                    ]}
+                ]},
+                { id: 'gs2', title: 'GS 2: Polity, Governance, IR', color: 'purple-600', topics: [
+                    { id: 'gs2-topic1', title: 'Indian Constitution and Polity', subtopics: [
+                        { id: 'gs2-topic1-subtopic1', title: 'Historical Underpinnings, Evolution, Features, Amendments' },
+                        { id: 'gs2-topic1-subtopic2', title: 'Basic Structure, Preamble, Fundamental Rights, DPSP, FDs' },
+                        { id: 'gs2-topic1-subtopic3', title: 'Union and State Governments: Legislature, Executive, Judiciary' },
+                        { id: 'gs2-topic1-subtopic4', title: 'Local Self-Government: Panchayati Raj, Municipalities' },
+                        { id: 'gs2-topic1-subtopic5', title: 'Constitutional Bodies: Election Commission, UPSC, CAG, etc.' }
+                    ]},
+                    { id: 'gs2-topic2', title: 'Governance and Social Justice', subtopics: [
+                        { id: 'gs2-topic2-subtopic1', title: 'Government Policies and Interventions for Development' },
+                        { id: 'gs2-topic2-subtopic2', title: 'Welfare Schemes for Vulnerable Sections' },
+                        { id: 'gs2-topic2-subtopic3', title: 'Role of NGOs, SHGs, various groups and associations' },
+                        { id: 'gs2-topic2-subtopic4', title: 'Transparency & Accountability: RTI, Lokpal, Citizen Charters' },
+                        { id: 'gs2-topic2-subtopic5', title: 'Human Resources: Health, Education, Human Development' }
+                    ]},
+                    { id: 'gs2-topic3', title: 'International Relations', subtopics: [
+                        { id: 'gs2-topic3-subtopic1', title: 'India and its Neighborhood Relations' },
+                        { id: 'gs2-topic3-subtopic2', title: 'Bilateral, Regional and Global Groupings and Agreements' },
+                        { id: 'gs2-topic3-subtopic3', title: 'Effect of Policies and Politics of Developed and Developing Countries' },
+                        { id: 'gs2-topic3-subtopic4', title: 'Important International Institutions, Agencies and Fora' }
+                    ]},
+                    { id: 'gs2-topic4', title: 'Separation of Powers', subtopics: [
+                        { id: 'gs2-topic4-subtopic1', title: 'Doctrine and its Application' },
+                        { id: 'gs2-topic4-subtopic2', title: 'Dispute Redressal Mechanisms' }
+                    ]},
+                    { id: 'gs2-topic5', title: 'Comparison of Indian Constitutional Scheme', subtopics: [
+                        { id: 'gs2-topic5-subtopic1', title: 'Comparison with other Countries' }
+                    ]},
+                    { id: 'gs2-topic6', title: 'Pressure Groups and Formal/Informal Associations', subtopics: [
+                        { id: 'gs2-topic6-subtopic1', title: 'Role in Polity' }
+                    ]}
+                ]},
+                { id: 'gs3', title: 'GS 3: Economy, Environment, Security, S&T', color: 'green-500', topics: [
+                    { id: 'gs3-topic1', title: 'Indian Economy and Development', subtopics: [
+                        { id: 'gs3-topic1-subtopic1', title: 'Indian Economy and issues relating to Planning, Mobilization of Resources' },
+                        { id: 'gs3-topic1-subtopic2', title: 'Growth, Development and Employment' },
+                        { id: 'gs3-topic1-subtopic3', title: 'Inclusive Growth and issues arising from it' },
+                        { id: 'gs3-topic1-subtopic4', title: 'Government Budgeting, Major Crops, Irrigation, Food Processing' },
+                        { id: 'gs3-topic1-subtopic5', title: 'Land Reforms, Liberalization, Infrastructure, Investment Models' }
+                    ]},
+                    { id: 'gs3-topic2', title: 'Environment and Disaster Management', subtopics: [
+                        { id: 'gs3-topic2-subtopic1', title: 'Conservation, Environmental Pollution and Degradation' },
+                        { id: 'gs3-topic2-subtopic2', title: 'Environmental Impact Assessment' },
+                        { id: 'gs3-topic2-subtopic3', title: 'Disaster and Disaster Management' },
+                        { id: 'gs3-topic2-subtopic4', title: 'Climate Change: Causes, Impacts, Mitigation Strategies' }
+                    ]},
+                    { id: 'gs3-topic3', title: 'Internal Security and Disaster Management', subtopics: [
+                        { id: 'gs3-topic3-subtopic1', title: 'Linkages between Development and Spread of Extremism' },
+                        { id: 'gs3-topic3-subtopic2', title: 'Role of External State and Non-State Actors in creating challenges' },
+                        { id: 'gs3-topic3-subtopic3', title: 'Challenges to Internal Security through Communication Networks' },
+                        { id: 'gs3-topic3-subtopic4', title: 'Cyber Security, Money Laundering' },
+                        { id: 'gs3-topic3-subtopic5', title: 'Border Area Management, Organized Crime, Terrorism' }
+                    ]},
+                    { id: 'gs3-topic4', title: 'Science and Technology', subtopics: [
+                        { id: 'gs3-topic4-subtopic1', title: 'Developments and their Applications and Effects in Everyday Life' },
+                        { id: 'gs3-topic4-subtopic2', title: 'Achievements of Indians in Science & Technology' },
+                        { id: 'gs3-topic4-subtopic3', title: 'Indigenization of Technology & Developing New Technology' },
+                        { id: 'gs3-topic4-subtopic4', title: 'Awareness in IT, Space, Computers, Robotics, Nanotechnology, Bio-technology' },
+                        { id: 'gs3-topic4-subtopic5', title: 'Intellectual Property Rights' }
+                    ]},
+                    { id: 'gs3-topic5', title: 'Agriculture and Allied Sectors', subtopics: [
+                        { id: 'gs3-topic5-subtopic1', title: 'Major Crops and Cropping Patterns' },
+                        { id: 'gs3-topic5-subtopic2', title: 'Irrigation Systems' }
+                    ]},
+                    { id: 'gs3-topic6', title: 'Infrastructure: Energy, Ports, Roads, Airports, Railways', subtopics: [
+                        { id: 'gs3-topic6-subtopic1', title: 'Investment Models' }
+                    ]}
+                ]},
+                { id: 'gs4', title: 'GS 4: Ethics, Integrity, Aptitude', color: 'yellow-500', topics: [
+                    { id: 'gs4-topic1', title: 'Ethics and Human Interface', subtopics: [
+                        { id: 'gs4-topic1-subtopic1', title: 'Essence, Determinants and Consequences of Ethics in Human Actions' },
+                        { id: 'gs4-topic1-subtopic2', title: 'Dimensions of Ethics, Ethics in Private and Public Relationships' },
+                        { id: 'gs4-topic1-subtopic3', title: 'Human Values: Lessons from the lives and teachings of great leaders' },
+                        { id: 'gs4-topic1-subtopic4', title: 'Role of Family, Society and Educational Institutions in inculcating values' }
+                    ]},
+                    { id: 'gs4-topic2', title: 'Attitude, Aptitude and Foundational Values', subtopics: [
+                        { id: 'gs4-topic2-subtopic1', title: 'Attitude: Content, Structure, Function; its influence and relation with thought and behaviour' },
+                        { id: 'gs4-topic2-subtopic2', title: 'Moral and Political Attitudes; Social Influence and Persuasion' },
+                        { id: 'gs4-topic2-subtopic3', title: 'Aptitude and Foundational Values for Civil Service: Integrity, Impartiality' },
+                        { id: 'gs4-topic2-subtopic4', title: 'Objectivity, Dedication to Public Service, Empathy, Tolerance, Compassion' }
+                    ]},
+                    { id: 'gs4-topic3', title: 'Emotional Intelligence', subtopics: [
+                        { id: 'gs4-topic3-subtopic1', title: 'Concepts, and their Utilities and Application in Administration and Governance' }
+                    ]},
+                    { id: 'gs4-topic4', title: 'Contributions of Moral Thinkers and Philosophers', subtopics: [
+                        { id: 'gs4-topic4-subtopic1', title: 'From India and World' }
+                    ]},
+                    { id: 'gs4-topic5', title: 'Public Administration Ethics', subtopics: [
+                        { id: 'gs4-topic5-subtopic1', title: 'Status and Challenges; Ethical Concerns and Dilemmas in Government and Private Institutions' },
+                        { id: 'gs4-topic5-subtopic2', title: 'Laws, Rules, Regulations and Conscience as Sources of Ethical Guidance' },
+                        { id: 'gs4-topic5-subtopic3', title: 'Accountability and Ethical Governance; Strengthening of Ethical and Moral Values in Governance' },
+                        { id: 'gs4-topic5-subtopic4', title: 'Ethical Issues in International Relations and Funding' },
+                        { id: 'gs4-topic5-subtopic5', title: 'Corporate Governance' }
+                    ]},
+                    { id: 'gs4-topic6', title: 'Probity in Governance', subtopics: [
+                        { id: 'gs4-topic6-subtopic1', title: 'Concept of Public Service, Philosophical Basis of Governance and Probity' },
+                        { id: 'gs4-topic6-subtopic2', title: 'Information Sharing and Transparency in Government' },
+                        { id: 'gs4-topic6-subtopic3', title: 'Right to Information, Codes of Ethics, Codes of Conduct, Citizen’s Charters' },
+                        { id: 'gs4-topic6-subtopic4', title: 'Work Culture, Quality of Service Delivery, Utilization of Public Funds, Challenges of Corruption' }
+                    ]},
+                    { id: 'gs4-topic7', title: 'Case Studies on above issues', subtopics: [] }
+                ]}
+            ],
+            flashcards: [
+                { id: 'gs1', title: 'GS 1: Art & Culture, History, Geography', color: 'red-500', topics: [
+                    { id: 'gs1-topic1', title: 'Ancient Indian History Key Facts', subtopics: [
+                        { id: 'gs1-topic1-subtopic1', title: 'Indian Polity', content: { // Changed title to "Indian Polity"
+                            intro: '', // Not used for flashcard display
+                            main: `
+                                <div class="flashcard-front">
+                                    <span class="flashcard-label">FlashCards</span>
+                                    <h3 id="flashcard-title" class="flashcard-title">Indian Polity</h3>
+                                    <button class="flashcard-button">Click to view</button>
+                                </div>
+                            `
+                        }},
+                        { id: 'gs1-topic1-subtopic2', title: 'Vedic Literature: Vedas, Brahmanas, Aranyakas, Upanishads' },
+                        { id: 'gs1-topic1-subtopic3', title: 'Mauryan Administration Key Terms' },
+                        { id: 'gs1-topic1-subtopic4', title: 'Gupta Period Scientific Advancements' }
+                    ]},
+                    { id: 'gs1-topic2', title: 'Modern Indian History Milestones', subtopics: [
+                        { id: 'gs1-topic2-subtopic1', title: 'Important Acts and Reforms (1773-1857)' },
+                        { id: 'gs1-topic2-subtopic2', title: 'Key Freedom Fighters and their Contributions' },
+                        { id: 'gs1-topic2-subtopic3', title: 'Major Movements and their Leaders' },
+                        { id: 'gs1-topic2-subtopic4', title: 'Viceroys and their Policies' }
+                    ]},
+                    { id: 'gs1-topic3', title: 'World and Indian Geography Terms', subtopics: [
+                        { id: 'gs1-topic3-subtopic1', title: 'Types of Rocks and their Characteristics' },
+                        { id: 'gs1-topic3-subtopic2', title: 'Atmospheric Layers and their Features' },
+                        { id: 'gs1-topic3-subtopic3', title: 'Major Soil Types in India' },
+                        { id: 'gs1-topic3-subtopic4', title: 'Important Rivers and their Tributaries' }
+                    ]},
+                    { id: 'gs1-topic4', title: 'World History Key Facts', subtopics: [
+                        { id: 'gs1-topic4-subtopic1', title: 'Causes of World War I' },
+                        { id: 'gs1-topic4-subtopic2', title: 'Key figures of Renaissance' }
+                    ]},
+                    { id: 'gs1-topic5', title: 'Indian Society Key Terms', subtopics: [
+                        { id: 'gs1-topic5-subtopic1', title: 'Caste System vs Varna System' },
+                        { id: 'gs1-topic5-subtopic2', title: 'Urbanization Challenges' }
+                    ]},
+                    { id: 'gs1-topic6', title: 'Art & Culture Glossary', subtopics: [
+                        { id: 'gs1-topic6-subtopic1', title: 'Different Dance Forms' },
+                        { id: 'gs1-topic6-subtopic2', title: 'Schools of Indian Philosophy' }
+                    ]}
+                ]},
+                { id: 'gs2', title: 'GS 2: Polity, Governance, IR', color: 'purple-600', topics: [
+                    { id: 'gs2-topic1', title: 'Constitutional Articles & Amendments', subtopics: [
+                        { id: 'gs2-topic1-subtopic1', title: 'Key Articles related to Fundamental Rights' },
+                        { id: 'gs2-topic1-subtopic2', title: 'Important Constitutional Amendments' },
+                        { id: 'gs2-topic1-subtopic3', title: 'Powers of President and Governor' },
+                        { id: 'gs2-topic1-subtopic4', title: 'Types of Writs' }
+                    ]},
+                    { id: 'gs2-topic2', title: 'Governance Concepts', subtopics: [
+                        { id: 'gs2-topic2-subtopic1', title: 'e-Governance Initiatives' },
+                        { id: 'gs2-topic2-subtopic2', title: 'Citizen Charters Principles' },
+                        { id: 'gs2-topic2-subtopic3', title: 'Social Audit Key Features' }
+                    ]},
+                    { id: 'gs2-topic3', title: 'International Relations Key Terms', subtopics: [
+                        { id: 'gs2-topic3-subtopic1', title: 'Major International Organizations and their Headquarters' },
+                        { id: 'gs2-topic3-subtopic2', title: 'Important Summits and their Outcomes' },
+                        { id: 'gs2-topic3-subtopic3', title: 'India\'s Bilateral Relations with Key Countries' }
+                    ]},
+                    { id: 'gs2-topic4', title: 'Public Policy Terms', subtopics: [
+                        { id: 'gs2-topic4-subtopic1', title: 'Policy Cycle Stages' },
+                        { id: 'gs2-topic4-subtopic2', title: 'Types of Public Policies' }
+                    ]},
+                    { id: 'gs2-topic5', title: 'Federalism Key Concepts', subtopics: [
+                        { id: 'gs2-topic5-subtopic1', title: 'Centre-State Financial Relations' },
+                        { id: 'gs2-topic5-subtopic2', title: 'Inter-State Council' }
+                    ]},
+                    { id: 'gs2-topic6', title: 'Judicial Review & Activism', subtopics: [
+                        { id: 'gs2-topic6-subtopic1', title: 'Landmark Judgments' }
+                    ]}
+                ]},
+                { id: 'gs3', title: 'GS 3: Economy, Environment, Security, S&T', color: 'green-500', topics: [
+                    { id: 'gs3-topic1', title: 'Economic Terms & Concepts', subtopics: [
+                        { id: 'gs3-topic1-subtopic1', title: 'Types of Unemployment' },
+                        { id: 'gs3-topic1-subtopic2', title: 'Monetary Policy Tools' },
+                        { id: 'gs3-topic1-subtopic3', title: 'Fiscal Policy Instruments' },
+                        { id: 'gs3-topic1-subtopic4', title: 'Types of Banking' }
+                    ]},
+                    { id: 'gs3-topic2', title: 'Environmental Conventions & Acts', subtopics: [
+                        { id: 'gs3-topic2-subtopic1', title: 'Major Environmental Acts in India' },
+                        { id: 'gs3-topic2-subtopic2', title: 'International Environmental Agreements' },
+                        { id: 'gs3-topic2-subtopic3', title: 'Protected Areas in India: National Parks, Wildlife Sanctuaries' }
+                    ]},
+                    { id: 'gs3-topic3', title: 'Internal Security Terms', subtopics: [
+                        { id: 'gs3-topic3-subtopic1', title: 'Types of Cyber Crimes' },
+                        { id: 'gs3-topic3-subtopic2', title: 'Naxalism: Causes and Solutions' },
+                        { id: 'gs3-topic3-subtopic3', title: 'Border Management Challenges' }
+                    ]},
+                    { id: 'gs3-topic4', title: 'Science & Technology Innovations', subtopics: [
+                        { id: 'gs3-topic4-subtopic1', title: 'Space Missions of ISRO' },
+                        { id: 'gs3-topic4-subtopic2', title: 'Applications of Biotechnology' },
+                        { id: 'gs3-topic4-subtopic3', title: 'Nanotechnology: Applications and Concerns' }
+                    ]},
+                    { id: 'gs3-topic5', title: 'Agriculture Schemes & Terms', subtopics: [
+                        { id: 'gs3-topic5-subtopic1', title: 'MSP and its Calculation' },
+                        { id: 'gs3-topic5-subtopic2', title: 'Food Security Act' }
+                    ]},
+                    { id: 'gs3-topic6', title: 'Disaster Management Frameworks', subtopics: [
+                        { id: 'gs3-topic6-subtopic1', title: 'NDMA and its Role' },
+                        { id: 'gs3-topic6-subtopic2', title: 'Early Warning Systems' }
+                    ]}
+                ]},
+                { id: 'gs4', title: 'GS 4: Ethics, Integrity, Aptitude', color: 'yellow-500', topics: [
+                    { id: 'gs4-topic1', title: 'Ethical Concepts', subtopics: [
+                        { id: 'gs4-topic1-subtopic1', title: 'Deontology vs Consequentialism' },
+                        { id: 'gs4-topic1-subtopic2', title: 'Emotional Intelligence Components' },
+                        { id: 'gs4-topic1-subtopic3', title: 'Public Service Values' }
+                    ]},
+                    { id: 'gs4-topic2', title: 'Moral Thinkers & their Theories', subtopics: [
+                        { id: 'gs4-topic2-subtopic1', title: 'Aristotle\'s Virtue Ethics' },
+                        { id: 'gs4-topic2-subtopic2', title: 'Kant\'s Categorical Imperative' },
+                        { id: 'gs4-topic2-subtopic3', title: 'Gandhi\'s Seven Sins' }
+                    ]},
+                    { id: 'gs4-topic3', title: 'Probity in Governance Terms', subtopics: [
+                        { id: 'gs4-topic3-subtopic1', title: 'Code of Ethics vs Code of Conduct' },
+                        { id: 'gs4-topic3-subtopic2', title: 'Lokpal and Lokayukta' },
+                        { id: 'gs4-topic3-subtopic3', title: 'Corporate Governance Principles' }
+                    ]},
+                    { id: 'gs4-topic4', title: 'Case Study Analysis Frameworks', subtopics: [
+                        { id: 'gs4-topic4-subtopic1', title: 'Stakeholder Analysis' },
+                        { id: 'gs4-topic4-subtopic2', title: 'Ethical Dilemma Resolution' }
+                    ]},
+                    { id: 'gs4-topic5', title: 'Aptitude & Foundational Values', subtopics: [
+                        { id: 'gs4-topic5-subtopic1', title: 'Integrity vs Honesty' },
+                        { id: 'gs4-topic5-subtopic2', title: 'Empathy and Compassion' }
+                    ]},
+                    { id: 'gs4-topic6', title: 'Corruption & its Impacts', subtopics: [
+                        { id: 'gs4-topic6-subtopic1', title: 'Causes of Corruption' },
+                        { id: 'gs4-topic6-subtopic2', title: 'Measures to Combat Corruption' }
+                    ]}
+                ]}
+            ],
+            quiz: [
+                { id: 'gs1', title: 'GS 1: Art & Culture, History, Geography', color: 'red-500', topics: [
+                    { id: 'gs1-topic1', title: 'Ancient & Medieval History MCQs', subtopics: [
+                        { id: 'gs1-topic1-subtopic1', title: 'Indus Valley Civilization Quiz' },
+                        { id: 'gs1-topic1-subtopic2', title: 'Buddhist and Jainism Quiz' },
+                        { id: 'gs1-topic1-subtopic3', title: 'Mughal Period Quiz' }
+                    ]},
+                    { id: 'gs1-topic2', title: 'Modern Indian History MCQs', subtopics: [
+                        { id: 'gs1-topic2-subtopic1', title: 'Revolt of 1857 Quiz' },
+                        { id: 'gs1-topic2-subtopic2', title: 'Gandhian Era Quiz' },
+                        { id: 'gs1-topic2-subtopic3', title: 'Partition of India Quiz' }
+                    ]},
+                    { id: 'gs1-topic3', title: 'Geography MCQs', subtopics: [
+                        { id: 'gs1-topic3-subtopic1', title: 'Physical Features of India Quiz' },
+                        { id: 'gs1-topic3-subtopic2', title: 'Climate of India Quiz' },
+                        { id: 'gs1-topic3-subtopic3', title: 'Agriculture in India Quiz' }
+                    ]},
+                    { id: 'gs1-topic4', title: 'World History MCQs', subtopics: [
+                        { id: 'gs1-topic4-subtopic1', title: 'French Revolution Quiz' },
+                        { id: 'gs1-topic4-subtopic2', title: 'American Revolution Quiz' }
+                    ]},
+                    { id: 'gs1-topic5', title: 'Indian Society MCQs', subtopics: [
+                        { id: 'gs1-topic5-subtopic1', title: 'Social Issues Quiz' },
+                        { id: 'gs1-topic5-subtopic2', title: 'Demography Quiz' }
+                    ]},
+                    { id: 'gs1-topic6', title: 'Art & Culture MCQs', subtopics: [
+                        { id: 'gs1-topic6-subtopic1', title: 'Classical Dances Quiz' },
+                        { id: 'gs1-topic6-subtopic2', title: 'Indian Architecture Quiz' }
+                    ]}
+                ]},
+                { id: 'gs2', title: 'GS 2: Polity, Governance, IR', color: 'purple-600', topics: [
+                    { id: 'gs2-topic1', title: 'Polity MCQs', subtopics: [
+                        { id: 'gs2-topic1-subtopic1', title: 'Fundamental Rights and Duties Quiz' },
+                        { id: 'gs2-topic1-subtopic2', title: 'Parliament and State Legislatures Quiz' },
+                        { id: 'gs2-topic1-subtopic3', title: 'Judiciary System Quiz' }
+                    ]},
+                    { id: 'gs2-topic2', title: 'Governance MCQs', subtopics: [
+                        { id: 'gs2-topic2-subtopic1', title: 'Right to Information Act Quiz' },
+                        { id: 'gs2-topic2-subtopic2', title: 'Welfare Schemes Quiz' },
+                        { id: 'gs2-topic2-subtopic3', title: 'Public Service Delivery Quiz' }
+                    ]},
+                    { id: 'gs2-topic3', title: 'International Relations MCQs', subtopics: [
+                        { id: 'gs2-topic3-subtopic1', title: 'UN and its Agencies Quiz' },
+                        { id: 'gs2-topic3-subtopic2', title: 'SAARC and BIMSTEC Quiz' },
+                        { id: 'gs2-topic3-subtopic3', title: 'India-US Relations Quiz' }
+                    ]},
+                    { id: 'gs2-topic4', title: 'Social Justice MCQs', subtopics: [
+                        { id: 'gs2-topic4-subtopic1', title: 'Poverty Alleviation Schemes Quiz' },
+                        { id: 'gs2-topic4-subtopic2', title: 'Education Policies Quiz' }
+                    ]},
+                    { id: 'gs2-topic5', title: 'Constitutional Bodies MCQs', subtopics: [
+                        { id: 'gs2-topic5-subtopic1', title: 'Election Commission Quiz' },
+                        { id: 'gs2-topic5-subtopic2', title: 'UPSC Quiz' }
+                    ]},
+                    { id: 'gs2-topic6', title: 'International Organizations MCQs', subtopics: [
+                        { id: 'gs2-topic6-subtopic1', title: 'WTO Quiz' },
+                        { id: 'gs2-topic6-subtopic2', title: 'IMF Quiz' }
+                    ]}
+                ]},
+                { id: 'gs3', title: 'GS 3: Economy, Environment, Security, S&T', color: 'green-500', topics: [
+                    { id: 'gs3-topic1', title: 'Economy MCQs', subtopics: [
+                        { id: 'gs3-topic1-subtopic1', title: 'National Income Accounting Quiz' },
+                        { id: 'gs3-topic1-subtopic2', title: 'Banking and Financial Markets Quiz' },
+                        { id: 'gs3-topic1-subtopic3', title: 'Agriculture and Food Management Quiz' }
+                    ]},
+                    { id: 'gs3-topic2', title: 'Environment MCQs', subtopics: [
+                        { id: 'gs3-topic2-subtopic1', title: 'Biodiversity and Conservation Quiz' },
+                        { id: 'gs3-topic2-subtopic2', title: 'Climate Change and Global Warming Quiz' },
+                        { id: 'gs3-topic2-subtopic3', title: 'Environmental Pollution Quiz' }
+                    ]},
+                    { id: 'gs3-topic3', title: 'Internal Security MCQs', subtopics: [
+                        { id: 'gs3-topic3-subtopic1', title: 'Cyber Security Threats Quiz' },
+                        { id: 'gs3-topic3-subtopic2', title: 'Terrorism and Extremism Quiz' },
+                        { id: 'gs3-topic3-subtopic3', title: 'Border Management Issues Quiz' }
+                    ]},
+                    { id: 'gs3-topic4', title: 'Science & Technology MCQs', subtopics: [
+                        { id: 'gs3-topic4-subtopic1', title: 'Space Technology Quiz' },
+                        { id: 'gs3-topic4-subtopic2', title: 'Biotechnology and Health Quiz' },
+                        { id: 'gs3-topic4-subtopic3', title: 'IT and Communications Quiz' }
+                    ]},
+                    { id: 'gs3-topic5', title: 'Disaster Management MCQs', subtopics: [
+                        { id: 'gs3-topic5-subtopic1', title: 'Earthquake Preparedness Quiz' },
+                        { id: 'gs3-topic5-subtopic2', title: 'Flood Management Quiz' }
+                    ]},
+                    { id: 'gs3-topic6', title: 'Investment Models MCQs', subtopics: [
+                        { id: 'gs3-topic6-subtopic1', title: 'PPP Model Quiz' },
+                        { id: 'gs3-topic6-subtopic2', title: 'FDI vs FII Quiz' }
+                    ]}
+                ]},
+                { id: 'gs4', title: 'GS 4: Ethics, Integrity, Aptitude', color: 'yellow-500', topics: [
+                    { id: 'gs4-topic1', title: 'Ethics & Human Interface MCQs', subtopics: [
+                        { id: 'gs4-topic1-subtopic1', title: 'Ethical Theories Quiz' },
+                        { id: 'gs4-topic1-subtopic2', title: 'Values and Morality Quiz' },
+                        { id: 'gs4-topic1-subtopic3', title: 'Ethics in Public Life Quiz' }
+                    ]},
+                    { id: 'gs4-topic2', title: 'Aptitude & Foundational Values MCQs', subtopics: [
+                        { id: 'gs4-topic2-subtopic1', title: 'Emotional Intelligence Quiz' },
+                        { id: 'gs4-topic2-subtopic2', title: 'Integrity and Impartiality Quiz' },
+                        { id: 'gs4-topic2-subtopic3', title: 'Objectivity and Dedication Quiz' }
+                    ]},
+                    { id: 'gs4-topic3', title: 'Probity in Governance MCQs', subtopics: [
+                        { id: 'gs4-topic3-subtopic1', title: 'RTI and Transparency Quiz' },
+                        { id: 'gs4-topic3-subtopic2', title: 'Corruption and its Challenges Quiz' },
+                        { id: 'gs4-topic3-subtopic3', title: 'Citizen Charters Quiz' }
+                    ]},
+                    { id: 'gs4-topic4', title: 'Moral Thinkers MCQs', subtopics: [
+                        { id: 'gs4-topic4-subtopic1', title: 'Plato and Aristotle Quiz' },
+                        { id: 'gs4-topic4-subtopic2', title: 'Gandhi and Ambedkar Quiz' }
+                    ]},
+                    { id: 'gs4-topic5', title: 'Case Study MCQs', subtopics: [
+                        { id: 'gs4-topic5-subtopic1', title: 'Ethical Dilemmas in Administration Quiz' },
+                        { id: 'gs4-topic5-subtopic2', title: 'Conflict of Interest Quiz' }
+                    ]},
+                    { id: 'gs4-topic6', title: 'Corporate Governance MCQs', subtopics: [
+                        { id: 'gs4-topic6-subtopic1', title: 'SEBI Regulations Quiz' },
+                        { id: 'gs4-topic6-subtopic2', title: 'CSR Initiatives Quiz' }
+                    ]}
+                ]}
+            ]
+        };
+
+        // Function to render content (topics or subtopics)
+        function renderContent(type, parentId = null, parentTitle = '') {
+            contentGrid.innerHTML = ''; // Clear previous content
+            detailedContentSection.classList.add('hidden'); // Hide detailed content by default
+            flashcardDisplay.classList.add('hidden'); // Hide flashcard display by default
+
+            let currentItems = [];
+            let headerGsText = '';
+            let headerTopicText = '';
+            let searchPlaceholder = '';
+            let cardIconPath = '';
+            let gsCardColor = ''; // To store the color of the parent GS card
+
+            // Determine which data to display based on type and parentId
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabType = urlParams.get('tabType') || 'notes'; // Get tabType from URL, default to notes
+
+            if (type === 'topics') {
+                const gsPaper = allUPSCContent[tabType].find(gs => gs.id === parentId);
+                currentItems = gsPaper ? gsPaper.topics : [];
+                headerGsText = gsPaper ? gsPaper.title.split(':')[0].trim() : ''; // Get "GS 1" from "GS 1: Art & Culture..."
+                searchPlaceholder = 'Search Topic';
+                cardIconPath = '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>'; // file-text
+                gsCardColor = gsPaper ? gsPaper.color : 'gray-400';
+                currentTopicTitle.classList.add('hidden'); // Hide topic title in header for topics view
+                searchInput.classList.remove('hidden'); // Show search bar for topics
+            } else if (type === 'subtopics') {
+                const gsPaper = allUPSCContent[tabType].find(gs => gs.id === urlParams.get('gsId')); // Use gsId from URL for GS title
+                const topic = gsPaper ? gsPaper.topics.find(t => t.id === parentId) : null;
+                currentItems = topic ? topic.subtopics : [];
+                headerGsText = gsPaper ? gsPaper.title.split(':')[0].trim() : '';
+                headerTopicText = parentTitle; // Use the passed topicTitle for the topic badge
+                searchPlaceholder = 'Search Subtopic';
+                cardIconPath = '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>'; // file-text
+                gsCardColor = gsPaper ? gsPaper.color : 'gray-400';
+                currentTopicTitle.classList.remove('hidden'); // Show topic title in header for subtopics view
+                searchInput.classList.remove('hidden'); // Show search bar for subtopics
+            } else if (type === 'content') {
+                contentGrid.classList.add('hidden'); // Hide grid for detailed content
+                searchInput.classList.add('hidden'); // Hide search bar for detailed content
+                
+                const gsPaper = allUPSCContent[tabType].find(gs => gs.id === urlParams.get('gsId'));
+                const topic = gsPaper.topics.find(t => t.id === urlParams.get('topicId'));
+                const subtopic = topic.subtopics.find(st => st.id === parentId);
+
+                // Set header titles
+                currentGsTitle.textContent = gsPaper.title.split(':')[0].trim();
+                currentTopicTitle.textContent = ` > ${topic.title}`;
+                currentTopicTitle.classList.remove('hidden'); // Ensure topic title is visible
+
+                // Handle content display based on tabType
+                if (tabType === 'notes') {
+                    detailedContentSection.classList.remove('hidden'); // Show detailed content section
+                    detailGsTag.textContent = gsPaper.title.split(':')[0].trim();
+                    detailTopicTag.textContent = topic.title;
+                    detailTopicTag.classList.remove('bg-red-500', 'bg-purple-600', 'bg-green-500', 'bg-blue-900', 'bg-yellow-500', 'bg-blue-500', 'bg-gray-400'); // Remove previous color
+                    detailTopicTag.classList.add(`bg-${gsPaper.color}`); // Apply correct color
+
+                    detailIntroText.textContent = subtopic.content.intro;
+                    detailMainContent.innerHTML = subtopic.content.main;
+                } else if (tabType === 'flashcards') {
+                    flashcardDisplay.classList.remove('hidden'); // Show flashcard display
+                    flashcardTitle.textContent = subtopic.title; // Set the title on the flashcard
+                    // Set the color of the flashcard based on gsPaper.color
+                    const flashcardFront = flashcardDisplay.querySelector('.flashcard-front');
+                    const flashcardBack = flashcardDisplay.querySelector('.flashcard-back');
+                    
+                    // Remove existing background colors
+                    flashcardFront.classList.remove('bg-red-500', 'bg-purple-600', 'bg-green-500', 'bg-blue-900', 'bg-yellow-500', 'bg-blue-500');
+                    flashcardBack.classList.remove('bg-red-600', 'bg-purple-700', 'bg-green-600', 'bg-blue-800', 'bg-yellow-600', 'bg-blue-600');
+
+                    // Add new background colors based on gsPaper.color
+                    flashcardFront.classList.add(`bg-${gsPaper.color}`);
+                    // Determine a slightly darker shade for the back card
+                    let darkerColor = '';
+                    if (gsPaper.color === 'red-500') darkerColor = 'red-600';
+                    else if (gsPaper.color === 'purple-600') darkerColor = 'purple-700';
+                    else if (gsPaper.color === 'green-500') darkerColor = 'green-600';
+                    else if (gsPaper.color === 'blue-500') darkerColor = 'blue-600';
+                    else if (gsPaper.color === 'yellow-500') darkerColor = 'yellow-600';
+                    else if (gsPaper.color === 'blue-900') darkerColor = 'blue-800'; // For dark blue
+                    else darkerColor = 'gray-500'; // Default fallback
+                    
+                    flashcardBack.classList.add(`bg-${darkerColor}`);
+
+                }
+                return; // Exit function as content is displayed
+            }
+
+            currentGsTitle.textContent = headerGsText;
+            currentTopicTitle.textContent = headerTopicText; // Set topic text for the badge
+
+            searchInput.placeholder = searchPlaceholder;
+
+            currentItems.forEach(item => {
+                const card = document.createElement('div');
+                let cardColorClass = `bg-${gsCardColor}`; // Use the color of the parent GS card
+                let ribbonColorClass = `ribbon-${gsCardColor.split('-')[0]}`; // Extract base color for ribbon
+
+                card.className = `relative ${cardColorClass} text-white rounded-xl shadow-lg p-6 flex flex-col justify-between items-start overflow-hidden cursor-pointer`;
+                card.innerHTML = `
+                    <div class="ribbon ${ribbonColorClass}"></div>
+                    <div class="flex items-center mb-3 card-icon-container">
+                        <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${cardIconPath}</svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mt-auto">${item.title}</h3>
+                `;
+
+                card.addEventListener('click', () => {
+                    if (type === 'topics') {
+                        window.location.href = `topics-subtopics-page.html?type=subtopics&gsId=${parentId}&topicId=${item.id}&topicTitle=${encodeURIComponent(item.title)}&tabType=${tabType}`;
+                    } else if (type === 'subtopics') {
+                        // Navigate to content display if content exists for subtopic
+                        if (item.content) {
+                             window.location.href = `topics-subtopics-page.html?type=content&gsId=${urlParams.get('gsId')}&topicId=${urlParams.get('topicId')}&subtopicId=${item.id}&subtopicTitle=${encodeURIComponent(item.title)}&tabType=${tabType}`;
+                        } else {
+                            alert(`Clicked on subtopic: ${item.title} for ${tabType}`);
+                        }
+                    }
+                });
+                contentGrid.appendChild(card);
+            });
+        }
+
+        // Parse URL parameters to determine what to render
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageType = urlParams.get('type');
+        const gsId = urlParams.get('gsId');
+        const topicId = urlParams.get('topicId');
+        const topicTitle = urlParams.get('topicTitle');
+        const subtopicId = urlParams.get('subtopicId');
+        const subtopicTitle = urlParams.get('subtopicTitle');
+
+
+        if (pageType === 'topics' && gsId) {
+            renderContent('topics', gsId);
+        } else if (pageType === 'subtopics' && gsId && topicId && topicTitle) {
+            renderContent('subtopics', topicId, decodeURIComponent(topicTitle));
+        } else if (pageType === 'content' && gsId && topicId && subtopicId && subtopicTitle) {
+            renderContent('content', subtopicId, decodeURIComponent(subtopicTitle));
+        } else {
+            // This page should ideally always be navigated to from the learn page
+            // If accessed directly without parameters, it won't display anything by default.
+            // You might want to add a fallback or redirect.
+            currentGsTitle.textContent = 'Error: No content to display.';
+        }
+    </script>
+</body>
+</html>

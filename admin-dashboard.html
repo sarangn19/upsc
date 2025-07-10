@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSC Admin Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa; /* Light gray background */
+            padding-bottom: 70px; /* Space for fixed bottom navigation */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="text-gray-800 p-4 sm:p-6 md:p-8">
+    <!-- Header -->
+    <header class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-blue-800">Admin Dashboard</h1>
+        <p class="text-gray-600">Manage UPSC Prep Content</p>
+    </header>
+
+    <!-- Admin Sections Grid -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Manage Notes Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center border border-blue-200">
+            <div class="text-blue-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-blue-800">Manage Notes</h3>
+            <p class="text-gray-600 mb-4">Add, edit, or delete notes for various topics.</p>
+            <button class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200">
+                Go to Notes
+            </button>
+        </div>
+
+        <!-- Manage Flashcards Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center border border-purple-200">
+            <div class="text-purple-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notebook-text"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9.5 8h5"/><path d="M9.5 12h5"/><path d="M9.5 16h5"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-purple-800">Manage Flashcards</h3>
+            <p class="text-gray-600 mb-4">Create, update, or remove flashcard sets.</p>
+            <button class="bg-purple-600 text-white font-semibold py-2 px-5 rounded-full shadow-md hover:bg-purple-700 transition-colors duration-200">
+                Go to Flashcards
+            </button>
+        </div>
+
+        <!-- Manage MCQs Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center border border-green-200">
+            <div class="text-green-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-help-circle"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-green-800">Manage MCQs</h3>
+            <p class="text-gray-600 mb-4">Add, modify, or delete multiple-choice questions.</p>
+            <button class="bg-green-600 text-white font-semibold py-2 px-5 rounded-full shadow-md hover:bg-green-700 transition-colors duration-200">
+                Go to MCQs
+            </button>
+        </div>
+
+        <!-- File Upload Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center border border-yellow-200">
+            <div class="text-yellow-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-yellow-800">Upload Files</h3>
+            <p class="text-gray-600 mb-4">Upload documents for content generation.</p>
+            <input type="file" id="file-upload" class="hidden" multiple>
+            <label for="file-upload" class="bg-yellow-600 text-white font-semibold py-2 px-5 rounded-full shadow-md hover:bg-yellow-700 transition-colors duration-200 cursor-pointer">
+                Choose Files
+            </label>
+            <span id="file-name" class="mt-2 text-sm text-gray-500">No file chosen</span>
+            <button id="upload-button" class="bg-yellow-500 text-white font-semibold py-2 px-5 rounded-full shadow-md hover:bg-yellow-600 transition-colors duration-200 mt-4" disabled>
+                Upload
+            </button>
+        </div>
+
+        <!-- AI Content Generation Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center border border-red-200">
+            <div class="text-red-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot"><path d="M12 8V4H8"/><path d="M22 17c0 2.76-2.24 5-5 5H7c-2.76 0-5-2.24-5-5V7c0-2.76 2.24-5 5-5h10c2.76 0 5 2.24 5 5z"/><path d="M9 14h6"/><path d="M9 10h6"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-red-800">Generate AI Content</h3>
+            <p class="text-gray-600 mb-4">Generate notes or news articles using AI.</p>
+            <select id="content-type-select" class="mb-3 p-2 border border-gray-300 rounded-md w-full max-w-xs">
+                <option value="notes">Notes</option>
+                <option value="news">News</option>
+            </select>
+            <textarea id="ai-prompt" class="w-full p-2 border border-gray-300 rounded-md mb-3" rows="3" placeholder="Enter prompt for AI generation..."></textarea>
+            <button id="generate-ai-content" class="bg-red-600 text-white font-semibold py-2 px-5 rounded-full shadow-md hover:bg-red-700 transition-colors duration-200">
+                Generate Content
+            </button>
+            <div id="ai-output" class="mt-4 text-sm text-gray-700 text-left w-full max-h-40 overflow-y-auto border border-gray-200 p-2 rounded-md bg-gray-50 hidden"></div>
+        </div>
+
+        <!-- Push Notifications Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center border border-indigo-200">
+            <div class="text-indigo-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell-ring"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M18.38 2.06a2.12 2.12 0 0 1 1.42.27 2.12 2.12 0 0 1 .7.71 2.12 2.12 0 0 1 .27 1.42l-2.06 2.08a2.12 2.12 0 0 1-1.42-.27 2.12 2.12 0 0 1-.7-.71l2.06-2.08Z"/></svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-indigo-800">Send Notifications</h3>
+            <p class="text-gray-600 mb-4">Send push notifications to all users.</p>
+            <textarea id="notification-message" class="w-full p-2 border border-gray-300 rounded-md mb-3" rows="3" placeholder="Enter notification message..."></textarea>
+            <button id="send-notification" class="bg-indigo-600 text-white font-semibold py-2 px-5 rounded-full shadow-md hover:bg-indigo-700 transition-colors duration-200">
+                Send Notification
+            </button>
+        </div>
+    </section>
+
+    <!-- Bottom Navigation Menu -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg rounded-t-xl py-3 px-4 flex justify-around items-center border-t border-gray-200 z-50">
+        <a href="dashboard.html" class="flex flex-col items-center text-blue-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="statistics.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            <span class="text-xs mt-1">Student Performance</span>
+        </a>
+    </nav>
+
+    <script>
+        const fileUpload = document.getElementById('file-upload');
+        const fileNameSpan = document.getElementById('file-name');
+        const uploadButton = document.getElementById('upload-button');
+        const contentTypeSelect = document.getElementById('content-type-select');
+        const aiPromptTextarea = document.getElementById('ai-prompt');
+        const generateAiContentButton = document.getElementById('generate-ai-content');
+        const aiOutputDiv = document.getElementById('ai-output');
+        const notificationMessageTextarea = document.getElementById('notification-message');
+        const sendNotificationButton = document.getElementById('send-notification');
+
+        // --- File Upload Logic ---
+        fileUpload.addEventListener('change', () => {
+            if (fileUpload.files.length > 0) {
+                fileNameSpan.textContent = fileUpload.files[0].name + (fileUpload.files.length > 1 ? ` (+${fileUpload.files.length - 1} more)` : '');
+                uploadButton.disabled = false;
+            } else {
+                fileNameSpan.textContent = 'No file chosen';
+                uploadButton.disabled = true;
+            }
+        });
+
+        uploadButton.addEventListener('click', () => {
+            if (fileUpload.files.length > 0) {
+                // In a real application, you would send these files to a server.
+                // For this UI, we'll just simulate a successful upload.
+                alert(`Uploading ${fileUpload.files.length} file(s)... (Simulated)`);
+                fileNameSpan.textContent = 'Upload successful!';
+                uploadButton.disabled = true;
+                fileUpload.value = ''; // Clear selected files
+            }
+        });
+
+        // --- AI Content Generation Logic ---
+        generateAiContentButton.addEventListener('click', async () => {
+            const contentType = contentTypeSelect.value;
+            const prompt = aiPromptTextarea.value.trim();
+
+            if (!prompt) {
+                alert('Please enter a prompt for AI content generation.');
+                return;
+            }
+
+            aiOutputDiv.classList.remove('hidden');
+            aiOutputDiv.innerHTML = '<div class="flex items-center justify-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div><span class="ml-3">Generating...</span></div>';
+            generateAiContentButton.disabled = true;
+
+            try {
+                const apiKey = ""; // Canvas will provide this
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: `Generate ${contentType} based on the following prompt: "${prompt}"` }] }],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 800
+                    }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const generatedText = result.candidates[0].content.parts[0].text;
+                    aiOutputDiv.innerHTML = `<pre class="whitespace-pre-wrap">${generatedText}</pre>`;
+                } else {
+                    aiOutputDiv.innerHTML = '<p class="text-red-500">Failed to generate content. Please try again.</p>';
+                }
+            } catch (error) {
+                console.error('Error generating AI content:', error);
+                aiOutputDiv.innerHTML = `<p class="text-red-500">An error occurred: ${error.message}. Please try again.</p>`;
+            } finally {
+                generateAiContentButton.disabled = false;
+            }
+        });
+
+        // --- Push Notification Logic ---
+        sendNotificationButton.addEventListener('click', () => {
+            const message = notificationMessageTextarea.value.trim();
+            if (message) {
+                // In a real application, you would send this message to a notification service.
+                // For this UI, we'll just simulate sending.
+                alert(`Sending notification: "${message}" (Simulated)`);
+                notificationMessageTextarea.value = ''; // Clear the textarea
+            } else {
+                alert('Please enter a message to send a notification.');
+            }
+        });
+    </script>
+</body>
+</html>
